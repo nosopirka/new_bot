@@ -25,7 +25,8 @@ commands = [
     "/sequences - фунукция для того, чтобы расчитать сумму n первых членов арифметической или геометрической "
     "прогрессии",
     "/equation - функция для того, чтобы бот решил вам уравнение, которое может быть до 2ой степени",
-    "/meme - функция после вызова которой бот скинет вам смешную картиночку"
+    "/meme - функция после вызова которой бот скинет вам смешную картиночку",
+    "/site - функция отправляет вам ссылку на наш вебсайт с дополнительной теорией по алгебре и геометрии"
 ]
 
 for_cnt_sis = {
@@ -267,6 +268,13 @@ def close_but(update, context):
     update.message.reply_text("Закрываю", reply_markup = ReplyKeyboardRemove())
 
 
+def send_website(update, context):
+    update.message.reply_text("А вот наш сайт, на котором вы можете найти теорию по алгебре и геометрии, котора вам "
+                              "обязательно поможет. Так же вы можете ознакомиться с его функционалом и получить "
+                              "удовольствие от пользования им. \n"
+                              "НАДО БУДЕТ СЮДЫ ССЫЛКУ ВСТАВИТЬ")
+
+
 def start(update, context):
     update.message.reply_text(
         "Привет! Я колобот. Я не малое умею. Также я бот-математик. Я умею переводить числа из одной системы счисления "
@@ -344,6 +352,7 @@ def main():
     dp.add_handler(CommandHandler("commands", cmd))
     dp.add_handler(CommandHandler("help", help))
     dp.add_handler(CommandHandler("meme", send_meme))
+    dp.add_handler(CommandHandler("site", send_website))
     dp.add_handler(MessageHandler(Filters.regex("^закрыть$"), close_but))
     dp.add_handler(MessageHandler(Filters.regex("^мем$"), send_meme))
 
