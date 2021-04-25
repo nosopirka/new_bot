@@ -1,30 +1,31 @@
+# - *- coding: utf- 8 - *-
 from glob import glob
 import logging
 from random import choice
-from telegram.ext import Updater, MessageHandler, Filters, CallbackContext, CommandHandler, ConversationHandler
+from telegram.ext import Updater, MessageHandler, Filters, CommandHandler, ConversationHandler
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
 
 import settings
 import functions
 
-
 TOKEN = settings.API_KEY
 
-PROXY = {
-    'proxy_url': settings.PROXY_URL,
-    'urllib3_proxy_kwargs': {
-        'username': settings.PROXY_USERNAME,
-        'password': settings.PROXY_PASSWORD
-    }
-}
+# PROXY = {
+#     'proxy_url': settings.PROXY_URL,
+#     'urllib3_proxy_kwargs': {
+#         'username': settings.PROXY_USERNAME,
+#         'password': settings.PROXY_PASSWORD
+#     }
+# }
 
 commands = [
-    "/start - начать диалог с колоботом",
-    "/help - подсказка о том, как начать пользоваться ботом",
+    "/start - начать диалог с ботом",
+    "/help - подсказка по пользованию ботом, в которой содержатся все функции",
     "/count_sistem - функция для того, что переводить числа из одной системы счисления в другую",
-    "/sequences_a - фунукция для того, чтобы расчитать сумму n первых членов арифметической прогрессии",
-    "/sequences_g - функция для того, чтобы расчитать сумму n первых членов геометрической прогрессии",
-    ""
+    "/sequences - фунукция для того, чтобы расчитать сумму n первых членов арифметической или геометрической "
+    "прогрессии",
+    "/equation - функция для того, чтобы бот решил вам уравнение, которое может быть до 2ой степени",
+    "/meme - функция после вызова которой бот скинет вам смешную картиночку"
 ]
 
 for_cnt_sis = {
@@ -43,7 +44,7 @@ for_seq = {
 sis_keys = [["арифметическая", "геометрическая"]]
 markup_sis = ReplyKeyboardMarkup(sis_keys, one_time_keyboard=True)
 
-mem_but = [["мем"]]
+mem_but = [["мем", "закрыть"]]
 markup_mem = ReplyKeyboardMarkup(mem_but, one_time_keyboard=False)
 
 logging.basicConfig(filename="bot.log", level=logging.INFO)
@@ -262,9 +263,18 @@ def stop(update, context):
     return ConversationHandler.END
 
 
+def close_but(update, context):
+    update.message.reply_text("Закрываю", reply_markup = ReplyKeyboardRemove())
+
+
 def start(update, context):
     update.message.reply_text(
-        "Привет! Я колобот. Я не малое умею", reply_markup=markup_mem)
+        "Привет! Я колобот. Я не малое умею. Также я бот-математик. Я умею переводить числа из одной системы счисления "
+        "в другую. Ещё я умею считать суммы первых скольки-то членов арифметической или геометрической прогрессий. "
+        "А самое интересное, что я умею, это решение уравнений до 2ой степени включительно!")
+    update.message.reply_text("Хоть я и умный математик, но у меня так же есть чувство юмора и у меня есть немного "
+                              "мемов для вас. \n Для большей информации используйте функцию /help",
+                              reply_markup=markup_mem)
 
 
 def help(update, context):
@@ -273,8 +283,7 @@ def help(update, context):
 
 
 def main():
-    updater = Updater(TOKEN, use_context=True,
-                      request_kwargs=PROXY)
+    updater = Updater(TOKEN, use_context=True)
 
     dp = updater.dispatcher
 
@@ -335,6 +344,7 @@ def main():
     dp.add_handler(CommandHandler("commands", cmd))
     dp.add_handler(CommandHandler("help", help))
     dp.add_handler(CommandHandler("meme", send_meme))
+    dp.add_handler(MessageHandler(Filters.regex("^закрыть$"), close_but))
     dp.add_handler(MessageHandler(Filters.regex("^мем$"), send_meme))
 
     updater.start_polling()
