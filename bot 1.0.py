@@ -121,35 +121,6 @@ def seq(update, context):
     return 4
 
 
-def seq4(update, context):
-    if ("да" in update.message.text.lower() or "yes" in update.message.text.lower() or
-        "of course" in update.message.text.lower() or "конечно" in update.message.text.lower()) \
-            and ("не" not in update.message.text.lower() or "no" not in update.message.text.lower()):
-        update.message.reply_text("А теперь выберите для какой прогрессии вы хотите посчитать сумму первых n членов",
-                                  reply_markup=markup_sis)
-        return 5
-    else:
-        update.message.reply_text("Ну ладно, как пожелаете...")
-        return ConversationHandler.END
-
-
-def seq5(update, context):
-    if update.message.text.lower() == "арифметическая":
-        update.message.reply_text("Теперь введите первый член вашей арифметической прогрессии (число)",
-                                  reply_markup=ReplyKeyboardRemove())
-        for_seq["f"] = 1
-        return 1
-    elif update.message.text.lower() == "геометрическая":
-        update.message.reply_text("Теперь введите первый член вашей геометрической прогрессии (число)",
-                                  reply_markup=ReplyKeyboardRemove())
-        for_seq["f"] = 0
-        return 1
-    else:
-        update.message.reply_text("Я не понял, какую прогрессию вы выбрали, пожалуйста выберите ещё раз",
-                                  reply_markup= markup_sis)
-        return 5
-
-
 def seq1(update, context):
     if not update.message.text.isdigit():
         update.message.reply_text("Пожалуйста, введите первый член в правильном формате: число")
@@ -201,39 +172,72 @@ def seq3(update, context):
     return ConversationHandler.END
 
 
-def address(update, context):
-    update.message.reply_text(
-        "Адрес: г. Москва, ул. Льва Толстого, 16")
+def seq4(update, context):
+    if ("да" in update.message.text.lower() or "yes" in update.message.text.lower() or
+        "of course" in update.message.text.lower() or "конечно" in update.message.text.lower()) \
+            and ("не" not in update.message.text.lower() or "no" not in update.message.text.lower()):
+        update.message.reply_text("А теперь выберите для какой прогрессии вы хотите посчитать сумму первых n членов",
+                                  reply_markup=markup_sis)
+        return 5
+    else:
+        update.message.reply_text("Ну ладно, как пожелаете...")
+        return ConversationHandler.END
 
 
-def phone(update, context):
-    update.message.reply_text("Телефон: +7(495)776-3030")
+def seq5(update, context):
+    if update.message.text.lower() == "арифметическая":
+        update.message.reply_text("Теперь введите первый член вашей арифметической прогрессии (число)",
+                                  reply_markup=ReplyKeyboardRemove())
+        for_seq["f"] = 1
+        return 1
+    elif update.message.text.lower() == "геометрическая":
+        update.message.reply_text("Теперь введите первый член вашей геометрической прогрессии (число)",
+                                  reply_markup=ReplyKeyboardRemove())
+        for_seq["f"] = 0
+        return 1
+    else:
+        update.message.reply_text("Я не понял, какую прогрессию вы выбрали, пожалуйста выберите ещё раз",
+                                  reply_markup= markup_sis)
+        return 5
 
 
-def site(update, context):
-    update.message.reply_text(
-        "Сайт: http://www.yandex.ru/company")
+def eq(update, context):
+    update.message.reply_text("О, вы хочешь чтобы я решил для тебя уравнение? Не так ли?")
+    return 1
 
 
-def work_time(update, context):
-    update.message.reply_text("График работы: \n"
-                              "пн: 8:00 - 18:00 \n"
-                              "вт: 9:00 - 19:00 \n"
-                              "ср: 8:30 - 18:30 \n"
-                              "чт: 9:30 - 19:30 \n"
-                              "пт: 9:00 - 18:00 \n"
-                              "сб-вс: выходные дни")
+def eq1(update, context):
+    if ("да" in update.message.text.lower() or "yes" in update.message.text.lower() or
+        "of course" in update.message.text.lower() or "конечно" in update.message.text.lower()) \
+            and ("не" not in update.message.text.lower() or "no" not in update.message.text.lower()):
+        update.message.reply_text("Ну тогда введите уравнение, которое вы хотите, чтобы я решил. Но учтите,"
+                                  " я могу понять уравние, только по шаблону, который выглядит так:\n"
+                                  "ax^2 + bx + c, где:\n"
+                                  "a и b - коэфиценты\n"
+                                  "c - свободный член\n"
+                                  "Уравнения степени выше 2ой я ещё не умею корректно решать. Поэтому если вы "
+                                  "будете вводить уравнение не так, как я попросил, то я либо скажу вам об этом, "
+                                  "либо решу его неправильно, поэтому заранее, извиняюсь.")
+        return 2
+    else:
+        update.message.reply_text("Ну ладно, как пожелаете...")
+        return ConversationHandler.END
 
 
-def close_keyboard(update, context):
-    update.message.reply_text(
-        "Ok",
-        reply_markup=ReplyKeyboardRemove()
-    )
-
-
-def echo(update, context):
-    update.message.reply_text(update.message.text)
+def eq2(update, context):
+    urav = update.message.text
+    ot = functions.solving(urav)
+    if "%" not in ot:
+        if ot[0] == "F":
+            update.message.reply_text("Уравнение верно для любого x")
+        else:
+            update.message.reply_text("Вы ввели неверное уравнение, либо у него нет решений")
+    else:
+        if ot.split("%")[0] == ot.split("%")[1]:
+            update.message.reply_text("Ваше уравнение имеет один корень: " + ot.split("%")[0])
+        else:
+            update.message.reply_text("Корни вашего уравнение это:" + ot.split("%")[0] + " и " + ot.split("%")[1])
+    return ConversationHandler.END
 
 
 def send_meme(update, context):
@@ -308,21 +312,28 @@ def main():
         fallbacks=[CommandHandler("stop", stop)]
     )
 
+    equation = ConversationHandler(
+        entry_points=[CommandHandler('equation', eq)],
+
+        states= {
+            1: [MessageHandler(Filters.text, eq1, pass_user_data=True)],
+
+            2: [MessageHandler(Filters.text, eq2, pass_user_data=True)]
+        },
+
+        fallbacks=[CommandHandler("stop", stop)]
+    )
+
     dp.add_handler(count_sis)
     dp.add_handler(sequences)
+    dp.add_handler(equation)
 
     dp.add_handler(CommandHandler("stop", stop))
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("commands", cmd))
     dp.add_handler(CommandHandler("help", help))
-    dp.add_handler(CommandHandler("address", address))
-    dp.add_handler(CommandHandler("phone", phone))
-    dp.add_handler(CommandHandler("site", site))
-    dp.add_handler(CommandHandler("work_time", work_time))
-    dp.add_handler(CommandHandler("close", close_keyboard))
     dp.add_handler(CommandHandler("meme", send_meme))
     dp.add_handler(MessageHandler(Filters.regex("^мем$"), send_meme))
-    # dp.add_handler(MessageHandler(Filters.text, echo))
 
     updater.start_polling()
 
