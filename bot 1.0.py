@@ -1,4 +1,6 @@
+from glob import glob
 import logging
+from random import choice
 from telegram.ext import Updater, MessageHandler, Filters, CallbackContext, CommandHandler, ConversationHandler
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
 
@@ -49,14 +51,7 @@ def cnt_sis(update, context):
                               "и просто! (я могу перевести любое целое положительное число в (2ой - 10ой) "
                               "системе счисления в любую другую (так же от 2ой до 10ой))")
     update.message.reply_text("Вам нужная моя помощь в этом?")
-    if ("да" in update.message.text.lower() or "yes" in update.message.text.lower() or
-        "of course" in update.message.text.lower() or "конечно" in update.message.text.lower()) \
-            and ("не" not in update.message.text.lower() or "no" not in update.message.text.lower()):
-        update.message.reply_text("Введите целое положительное число, которое хотите перевести:")
-        return 1
-    else:
-        update.message.reply_text("Ну ладно, как пожелаете...")
-        return ConversationHandler.END
+    return 4
 
 
 def cnt_sis1(update, context):
@@ -104,6 +99,17 @@ def cnt_sis3(update, context):
                               "ой системе счисления равно " + functions.perevod(for_cnt_sis) + " в " +
                               str(for_cnt_sis["sis2"]) + "ой системе счисления")
     return ConversationHandler.END
+
+
+def cnt_sis4(update, context):
+    if ("да" in update.message.text.lower() or "yes" in update.message.text.lower() or
+        "of course" in update.message.text.lower() or "конечно" in update.message.text.lower()) \
+            and ("не" not in update.message.text.lower() or "no" not in update.message.text.lower()):
+        update.message.reply_text("Введите целое положительное число, которое хотите перевести:")
+        return 1
+    else:
+        update.message.reply_text("Ну ладно, как пожелаете...")
+        return ConversationHandler.END
 
 
 def seq(update, context):
@@ -227,6 +233,13 @@ def echo(update, context):
     update.message.reply_text(update.message.text)
 
 
+def send_meme(update, context):
+    meme_list = glob("images/mem*.jp*g")
+    meme_pic = choice(meme_list)
+    chat_id = update.effective_chat.id
+    context.bot.send_photo(chat_id=chat_id, photo=open(meme_pic, "rb"))
+
+
 def cmd(update, context):
     cmds = commands[0]
     for x in commands[1:]:
@@ -265,7 +278,9 @@ def main():
 
             2: [MessageHandler(Filters.text, cnt_sis2, pass_user_data=True)],
 
-            3: [MessageHandler(Filters.text, cnt_sis3, pass_user_data=True)]
+            3: [MessageHandler(Filters.text, cnt_sis3, pass_user_data=True)],
+
+            4: [MessageHandler(Filters.text, cnt_sis4, pass_user_data=True)]
         },
 
         fallbacks=[CommandHandler('stop', stop)]
@@ -302,6 +317,7 @@ def main():
     dp.add_handler(CommandHandler("site", site))
     dp.add_handler(CommandHandler("work_time", work_time))
     dp.add_handler(CommandHandler("close", close_keyboard))
+    dp.add_handler(CommandHandler("meme", send_meme))
     # dp.add_handler(MessageHandler(Filters.text, echo))
 
     updater.start_polling()
