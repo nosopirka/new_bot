@@ -230,8 +230,10 @@ def eq2(update, context):
     if "%" not in ot:
         if ot[0] == "F":
             update.message.reply_text("Уравнение верно для любого x")
+        elif ot[0] == "N":
+            update.message.reply_text("У вашего уравнения нет решений")
         else:
-            update.message.reply_text("Вы ввели неверное уравнение, либо у него нет решений")
+            update.message.reply_text("Вы ввели уравнение в неправильном формате")
     else:
         if ot.split("%")[0] == ot.split("%")[1]:
             update.message.reply_text("Ваше уравнение имеет один корень: " + ot.split("%")[0])

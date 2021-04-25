@@ -52,6 +52,8 @@ def solving(ur):
                 if ur[i2 + 2] == "-":
                     c *= -1
                 d = b * b - 4 * a * c
+                if d < 0:
+                    return "No solutions"
                 x1 = (-b + d ** (0.5)) / (2 * a)
                 x2 = (-b - d ** (0.5)) / (2 * a)
             else:
