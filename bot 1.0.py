@@ -155,7 +155,32 @@ def seq2(update, context):
             update.message.reply_text("Пожалуйста, введите знаменатель вашей геометрической прогрессии "
                                       "в правильном формате: число")
         return 2
-    if
+    if for_seq["f"]:
+        update.message.reply_text("Ну и осталось ввести количесво членов в вашей фриметической прогрессии. "
+                                  "Введите его(это должно быть целое неотрицательное число)")
+    else:
+        update.message.reply_text("Ну и осталось ввести количество членов в вашей геометрической прогрессии."
+                                  "Введите его(это должно быть целое неотрицательное число)")
+    return 3
+
+
+def seq3(update, context):
+    if not update.message.text.isdigit():
+        update.message.reply_text("Пожалуйста, введите количество членов в правильном формате: "
+                                  "целое неотрицательное ЧИСЛО")
+    if int(update.message.text) != float(update.message.text):
+        update.message.reply_text("Пожалуйста, введите количество членов в правильном формате: "
+                                  "ЦЕЛОЕ неотрицательное число")
+    if int(update.message.text) < 0:
+        update.message.reply_text("Пожалуйста, введите количество членов в правильном формате: "
+                                  "целое НЕОТРИЦАТЕЛЬНОЕ число")
+    if for_seq["f"]:
+        update.message.reply_text("Сумма первых " + str(for_seq["n"]) + " членов вашей арифметической прогресии равна "
+                                  + str(functions.sequences(for_seq)))
+    else:
+        update.message.reply_text("Сумма первых " + str(for_seq["n"]) + " членов вашей геометрической прогресии равна "
+                                  + str(functions.sequences(for_seq)))
+    return ConversationHandler.END
 
 
 

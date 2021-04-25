@@ -26,5 +26,10 @@ def sequences(a):
         b1 = a["a1/b1"]
         q = a["d/q"]
         n = a["n"]
-        s = b1 * ((q ** n) - 1) / (q - 1)
+        if n == 1:
+            s = b1
+        elif n == 0:
+            s = 0
+        else:
+            s = b1 * ((q ** n) - 1) / (q - 1)
     return s
