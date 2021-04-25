@@ -40,8 +40,11 @@ for_seq = {
     "f": 0
 }
 
-reply_keyboard = [["арифметическая", "геометрическая"]]
-markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+sis_keys = [["арифметическая", "геометрическая"]]
+markup_sis = ReplyKeyboardMarkup(sis_keys, one_time_keyboard=True)
+
+mem_but = [["мем"]]
+markup_mem = ReplyKeyboardMarkup(mem_but, one_time_keyboard=False)
 
 logging.basicConfig(filename="bot.log", level=logging.INFO)
 
@@ -123,7 +126,7 @@ def seq4(update, context):
         "of course" in update.message.text.lower() or "конечно" in update.message.text.lower()) \
             and ("не" not in update.message.text.lower() or "no" not in update.message.text.lower()):
         update.message.reply_text("А теперь выберите для какой прогрессии вы хотите посчитать сумму первых n членов",
-                                  reply_markup=markup)
+                                  reply_markup=markup_sis)
         return 5
     else:
         update.message.reply_text("Ну ладно, как пожелаете...")
@@ -143,7 +146,7 @@ def seq5(update, context):
         return 1
     else:
         update.message.reply_text("Я не понял, какую прогрессию вы выбрали, пожалуйста выберите ещё раз",
-                                  reply_markup= markup)
+                                  reply_markup= markup_sis)
         return 5
 
 
@@ -255,7 +258,7 @@ def stop(update, context):
 
 def start(update, context):
     update.message.reply_text(
-        "Привет! Я колобот. Я не малое умею")
+        "Привет! Я колобот. Я не малое умею", reply_markup=markup_mem)
 
 
 def help(update, context):
@@ -283,7 +286,7 @@ def main():
             4: [MessageHandler(Filters.text, cnt_sis4, pass_user_data=True)]
         },
 
-        fallbacks=[CommandHandler('stop', stop)]
+        fallbacks=[CommandHandler("stop", stop)]
     )
 
     sequences = ConversationHandler(
@@ -302,22 +305,23 @@ def main():
             5: [MessageHandler(Filters.text, seq5, pass_user_data=True)]
         },
 
-        fallbacks=[CommandHandler('stop', stop)]
+        fallbacks=[CommandHandler("stop", stop)]
     )
 
     dp.add_handler(count_sis)
     dp.add_handler(sequences)
 
+    dp.add_handler(CommandHandler("stop", stop))
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("commands", cmd))
     dp.add_handler(CommandHandler("help", help))
-    dp.add_handler(CommandHandler('stop', stop))
     dp.add_handler(CommandHandler("address", address))
     dp.add_handler(CommandHandler("phone", phone))
     dp.add_handler(CommandHandler("site", site))
     dp.add_handler(CommandHandler("work_time", work_time))
     dp.add_handler(CommandHandler("close", close_keyboard))
     dp.add_handler(CommandHandler("meme", send_meme))
+    dp.add_handler(MessageHandler(Filters.regex("^мем$"), send_meme))
     # dp.add_handler(MessageHandler(Filters.text, echo))
 
     updater.start_polling()
