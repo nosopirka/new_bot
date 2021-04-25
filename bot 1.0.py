@@ -38,8 +38,7 @@ for_seq = {
     "f": 0
 }
 
-reply_keyboard = [['/address', '/phone'],
-                  ['/site', '/work_time']]
+reply_keyboard = [["арифметическая", "геометрическая"]]
 markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
 
 logging.basicConfig(filename="bot.log", level=logging.INFO)
@@ -107,32 +106,37 @@ def cnt_sis3(update, context):
     return ConversationHandler.END
 
 
-def seq_a(update, context):
-    update.message.reply_text("Могу посчитать сумму первых n членов арифметической прогрессии по её первому члену и"
-                              " разности прогрессии! Вам нужна моя помощь?")
+def seq(update, context):
+    update.message.reply_text("Могу посчитать сумму первых n членов геометрической прогрессии по её первому члену и"
+                              " знаменателю прогрессии! Вам нужна моя помощь?")
+    return 4
+
+
+def seq4(update, context):
     if ("да" in update.message.text.lower() or "yes" in update.message.text.lower() or
         "of course" in update.message.text.lower() or "конечно" in update.message.text.lower()) \
             and ("не" not in update.message.text.lower() or "no" not in update.message.text.lower()):
-        update.message.reply_text("Хорошо, тогда введите первый член вашей арифметической прогрессии(число)")
-        for_seq["f"] = 1
-        return 1
+        update.message.reply_text("А теперь выберите для какой прогрессии вы хотите посчитать сумму первых n членов",
+                                  reply_markup=markup)
+        return 5
     else:
         update.message.reply_text("Ну ладно, как пожелаете...")
         return ConversationHandler.END
 
 
-def seq_g(update, context):
-    update.message.reply_text("Могу посчитать сумму первых n членов геометрической прогрессии по её первому члену и"
-                              " знаменателю прогрессии! Вам нужна моя помощь?")
-    if ("да" in update.message.text.lower() or "yes" in update.message.text.lower() or
-        "of course" in update.message.text.lower() or "конечно" in update.message.text.lower()) \
-            and ("не" not in update.message.text.lower() or "no" not in update.message.text.lower()):
-        update.message.reply_text("Хорошо, тогда введите первый член вашей геометрической прогрессии(число)")
+def seq5(update, context):
+    if update.message.text == "арифметическая":
+        update.message.reply_text("Теперь введите первый член вашей арифметической прогрессии (число)")
+        for_seq["f"] = 1
+        return 1
+    elif update.message.text == "геометрическая":
+        update.message.reply_text("Теперь введите первый член вашей геометрической прогрессии (число)")
         for_seq["f"] = 0
         return 1
     else:
-        update.message.reply_text("Ну ладно, как пожелаете...")
-        return ConversationHandler.END
+        update.message.reply_text("Я не понял, какую прогрессию вы выбрали, пожалуйста выберите ещё раз",
+                                  reply_markup= markup)
+        return 5
 
 
 def seq1(update, context):
@@ -252,9 +256,9 @@ def main():
         entry_points=[CommandHandler('count_sistem', cnt_sis)],
 
         states={
-            # Функция читает ответ на первый вопрос и задаёт второй.
+
             1: [MessageHandler(Filters.text, cnt_sis1, pass_user_data=True)],
-            # Функция читает ответ на второй вопрос и завершает диалог.
+
             2: [MessageHandler(Filters.text, cnt_sis2, pass_user_data=True)],
 
             3: [MessageHandler(Filters.text, cnt_sis3, pass_user_data=True)]
@@ -264,21 +268,26 @@ def main():
     )
 
     sequences = ConversationHandler(
-        entry_points=[CommandHandler('sequences_a', seq_a), CommandHandler('sequences_g', seq_g)],
+        entry_points=[CommandHandler('sequences', seq)],
 
         states={
-            # Функция читает ответ на первый вопрос и задаёт второй.
+
             1: [MessageHandler(Filters.text, seq1, pass_user_data=True)],
-            # Функция читает ответ на второй вопрос и завершает диалог.
+
             2: [MessageHandler(Filters.text, seq2, pass_user_data=True)],
 
-            3: [MessageHandler(Filters.text, seq3, pass_user_data=True)]
+            3: [MessageHandler(Filters.text, seq3, pass_user_data=True)],
+
+            4: [MessageHandler(Filters.text, seq4, pass_user_data=True)],
+
+            5: [MessageHandler(Filters.text, seq5, pass_user_data=True)]
         },
 
         fallbacks=[CommandHandler('stop', stop)]
     )
 
     dp.add_handler(count_sis)
+    dp.add_handler(sequences)
 
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("commands", cmd))
