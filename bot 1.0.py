@@ -125,12 +125,14 @@ def seq4(update, context):
 
 
 def seq5(update, context):
-    if update.message.text == "арифметическая":
-        update.message.reply_text("Теперь введите первый член вашей арифметической прогрессии (число)")
+    if update.message.text.lower() == "арифметическая":
+        update.message.reply_text("Теперь введите первый член вашей арифметической прогрессии (число)",
+                                  reply_markup=ReplyKeyboardRemove())
         for_seq["f"] = 1
         return 1
-    elif update.message.text == "геометрическая":
-        update.message.reply_text("Теперь введите первый член вашей геометрической прогрессии (число)")
+    elif update.message.text.lower() == "геометрическая":
+        update.message.reply_text("Теперь введите первый член вашей геометрической прогрессии (число)",
+                                  reply_markup=ReplyKeyboardRemove())
         for_seq["f"] = 0
         return 1
     else:
@@ -143,6 +145,7 @@ def seq1(update, context):
     if not update.message.text.isdigit():
         update.message.reply_text("Пожалуйста, введите первый член в правильном формате: число")
         return 1
+    for_seq["a1/b1"] = float(update.message.text)
     if for_seq["f"]:
         update.message.reply_text("А теперь введите разность вашей арифметической прогрессии(число)")
     else:
@@ -159,6 +162,7 @@ def seq2(update, context):
             update.message.reply_text("Пожалуйста, введите знаменатель вашей геометрической прогрессии "
                                       "в правильном формате: число")
         return 2
+    for_seq["d/q"] = float(update.message.text)
     if for_seq["f"]:
         update.message.reply_text("Ну и осталось ввести количесво членов в вашей фриметической прогрессии. "
                                   "Введите его(это должно быть целое неотрицательное число)")
@@ -178,6 +182,7 @@ def seq3(update, context):
     if int(update.message.text) < 0:
         update.message.reply_text("Пожалуйста, введите количество членов в правильном формате: "
                                   "целое НЕОТРИЦАТЕЛЬНОЕ число")
+    for_seq["n"] = int(update.message.text)
     if for_seq["f"]:
         update.message.reply_text("Сумма первых " + str(for_seq["n"]) + " членов вашей арифметической прогресии равна "
                                   + str(functions.sequences(for_seq)))
@@ -185,7 +190,6 @@ def seq3(update, context):
         update.message.reply_text("Сумма первых " + str(for_seq["n"]) + " членов вашей геометрической прогресии равна "
                                   + str(functions.sequences(for_seq)))
     return ConversationHandler.END
-
 
 
 def address(update, context):
