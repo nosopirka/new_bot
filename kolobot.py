@@ -272,7 +272,7 @@ def send_website(update, context):
     update.message.reply_text("А вот наш сайт, на котором вы можете найти теорию по алгебре и геометрии, котора вам "
                               "обязательно поможет. Так же вы можете ознакомиться с его функционалом и получить "
                               "удовольствие от пользования им. \n"
-                              "НАДО БУДЕТ СЮДЫ ССЫЛКУ ВСТАВИТЬ")
+                              "https://helpfultechsite.herokuapp.com/connection")
 
 
 def start(update, context):
